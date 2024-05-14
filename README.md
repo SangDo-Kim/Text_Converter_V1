@@ -6,7 +6,7 @@ unicode escape sequence, white space characters.
 예: 리스트, 딕셔너리, 유니코드 이스케이프 시퀀스, 공백 문자
 
 Example:
-- Tab indented string to list
+- Tab indented string to list:
 Kitchen
 	Cutting Board
 	Knife Set
@@ -35,7 +35,7 @@ Bedroom
 	"Bedroom"
 ]
 
-- Tab indented string to dictionary
+- Tab indented string to dictionary:
 Kitchen
 	Cutting Board
 Living Room
@@ -48,12 +48,12 @@ Bedroom
 	"Bedroom": Null
 }
 
-- String with unicode escape sequence to string with human-readable characters
+- String with unicode escape sequence to string with human-readable characters:
 QLabelWidget.setText(u"\uc6d0\ubcf8 \ub0b4\uc6a9\uc744 \uc9c0\uc6c1\ub2c8\ub2e4.")
 -->
 QLabelWidget.setText(u"원본 내용을 지웁니다.")
 
-- String with white space characters to string with white space escape character
+- String with white space characters to string with white space escape character:
 Kitchen
 	Cutting Board
 	Knife Set
