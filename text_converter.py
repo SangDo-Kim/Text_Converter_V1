@@ -1,51 +1,38 @@
-"""# Text Converter V1.1 for programmers (GUI in Korean)
+"""# Text Converter V1.2 for programmers (GUI in Korean)
 Written by SangDo_Kim
 This program converts various text to a form frequently used in Python programmings, like list, dictionary,
 unicode escape sequence, white space characters.
+Please refer to "demo_image.jpg" in the repository to see its interface.
 이 프로그램은 다양한 텍스트를 파이썬 프로그램에서 자주 사용되는 형식으로 변환합니다
 예: 리스트, 딕셔너리, 유니코드 이스케이프 시퀀스, 공백 문자
+이 리포지토리의 demo_image.jpg 참조.
 
 Example:
 - Tab indented string to list:
 Kitchen
 	Cutting Board
 	Knife Set
-		Long knife
-		Short knife
-Living Room
-	Sofas
-	Chairs
-Bedroom
 -->
 [
 	"Kitchen",
 	[
-		"Cutting Board",
-		"Knife Set",
-		[
-			"Long knife",
-			"Short knife"
-		]
-	],
-	"Living Room",
-	[
-		"Sofas",
-		"Chairs"
-	],
-	"Bedroom"
+		"Cutting Board", "Knife Set"
+	]
 ]
 
 - Tab indented string to dictionary:
 Kitchen
 	Cutting Board
+	    Board001
+	Washer
 Living Room
 	Sofas
 Bedroom
 -->
 {
-	"Kitchen": "Cutting Board",
+	"Kitchen": {{"Cutting Board": "Board001"}, {"Washer": None}
 	"Living Room": "Sofas",
-	"Bedroom": Null
+	"Bedroom": None
 }
 
 - String with unicode escape sequence to string with human-readable characters:
@@ -62,21 +49,26 @@ Kitchen
 
 V1.1
 - Added unicode sequence converter, list converter, dictionary converter
+
+V1.2
+- Show tool tips for buttons.
+- Support level 3 hierarchy for dictionary.
 """
 import json
 
 from PySide6.QtWidgets import QMainWindow, QApplication, QWidget, QMessageBox
 from text_converter_ui import Ui_Form
+from string_to_tree import string_to_dict
 
 class MainWindow(QWidget, Ui_Form):
     def __init__(self, *args, obj=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.setupUi(self)
 
-        self.setWindowTitle("텍스트 변환기 V1.1")
+        self.setWindowTitle("텍스트 변환기 V1.2")
         self.plainTextEdit.setTabStopDistance(20)
         self.plainTextEdit_2.setTabStopDistance(20)
-        # self.radioButton_tab.setChecked(True)
+        self.label_status.setText("개발자: SangDo_Kim, 블로그: sangdo-kim.blogspot.com")
 
         self.plainTextEdit.setFocus()
         self.pushButton_list.clicked.connect(self.convert_to_list)
@@ -89,41 +81,36 @@ class MainWindow(QWidget, Ui_Form):
     def convert_to_list(self):
         text = self.plainTextEdit.toPlainText()
         list1 = self.string_to_nested_list(text)
-        if self.radioButton_tab.isChecked():
-            text_mod = json.dumps(list1, indent="\t")
+        if self.checkBox_tab.isChecked():
+            if self.checkBox_number.isChecked():
+                text_mod = json.dumps(list1, indent="\t", separators=(",", ":"))
+            else:
+                text_mod = json.dumps(list1, indent="\t")
         else:
-            text_mod = json.dumps(list1)
-        # list1 = text.replace("\n", '", "')
-        # list1 = f'["{list1}"]'
+            if self.checkBox_number.isChecked():
+                json_string = json.dumps(data, indent="\t", separators=(",", ":"))
+            else:
+                text_mod = json.dumps(list1)
+
         self.plainTextEdit_2.setPlainText(text_mod)
         self.label_status.setText("리스트로 변환했습니다.")
 
     def string_to_nested_list(self, string):
-        lines = string.split('\n')
+        list_split = string.split("\n")
         nested_list = []
-        stack = [nested_list]
-
-        for line in lines:
-            level = line.count('\t')
-            node = line.strip('\t')
-
+        stack = [nested_list]  # Stack to keep track of nested levels
+        for item in list_split:
+            level = item.count("\t")
+            item = item.strip()
             while len(stack) > level + 1:
                 stack.pop()
-
-            parent = stack[-1]
-
-            if node:
-                if parent and isinstance(parent[-1], list):
-                    parent[-1].append(node)
-                else:
-                    parent.append([node])
-
-                if level + 1 < len(stack):
-                    stack.pop()
-                if parent:
-                    stack.append(parent[-1])
-
-        return nested_list[0] if nested_list else nested_list
+            if level == len(stack) - 1:
+                stack[-1].append(item)
+            elif level == len(stack):
+                new_list = [item]
+                stack[-1].append(new_list)
+                stack.append(new_list)
+        return nested_list
 
     def copy_to_clipboard(self):
         clipboard = QApplication.clipboard()
@@ -160,10 +147,7 @@ class MainWindow(QWidget, Ui_Form):
 
     def convert_white_space(self):
         text = self.plainTextEdit.toPlainText()
-        if self.radioButton_tab.isChecked():
-            text_mod = json.dumps(text, indent="\t")
-        else:
-            text_mod = json.dumps(text)
+        text_mod = json.dumps(text)
         # list1 = text.replace("\n", '", "')
         # list1 = f'["{list1}"]'
         self.plainTextEdit_2.setPlainText(text_mod)
@@ -171,32 +155,25 @@ class MainWindow(QWidget, Ui_Form):
 
     def convert_to_dict(self):
         text = self.plainTextEdit.toPlainText()
+
         dict1 = self.string_to_dict(str(text))
-        if self.radioButton_tab.isChecked():
+
+        if self.checkBox_tab.isChecked():
             text_mod = json.dumps(dict1, indent="\t")
         else:
             text_mod = json.dumps(dict1)
-        text_mod = text_mod.replace('": null', '": Null')
+        text_mod = text_mod.replace('": null', '": None')
         self.plainTextEdit_2.setPlainText(text_mod)
-        if text.find("\t\t") >= 0:
-            self.label_status.setText("현재로서는 다단계 딕셔너리를 지원하지 않습니다.")
-            QMessageBox.information(self, "정보", "현재로서는 다단계 딕셔너리를 지원하지 않습니다.")
+        if text.find("\t\t\t") >= 0:
+            self.label_status.setText("딕셔너리 변환 오류")
+            QMessageBox.information(self, "정보", "현재 딕셔너리에 대해서는 3단계 계층 구조까지만 지원합니다.")
         else:
             self.label_status.setText("딕셔너리로 변환했습니다.")
 
     def string_to_dict(self, string):
-        string_split = string.split("\n")
-        _dict = {}
-        _key = ""
-        for item in string_split:
-            if item.startswith("\t"):
-                if _dict[_key] is None:
-                    _dict[_key] = item.strip()
-            else:
-                _dict[item] = None
-                _key = item
-
+        _dict = string_to_dict(string)
         return _dict
+
 
 app = QApplication()
 main_window = MainWindow()
