@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'text_converter_uidtLouv.ui'
+## Form generated from reading UI file 'text_converter_uiOmzKln.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.7.0
 ##
@@ -15,8 +15,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QGridLayout, QGroupBox, QLabel,
-    QPlainTextEdit, QPushButton, QRadioButton, QSizePolicy,
+from PySide6.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
+    QLabel, QPlainTextEdit, QPushButton, QSizePolicy,
     QWidget)
 
 class Ui_Form(object):
@@ -94,35 +94,41 @@ class Ui_Form(object):
         self.groupBox.setMaximumSize(QSize(16777215, 16777215))
         self.gridLayout_3 = QGridLayout(self.groupBox)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.pushButton_unicode = QPushButton(self.groupBox)
-        self.pushButton_unicode.setObjectName(u"pushButton_unicode")
+        self.checkBox_tab = QCheckBox(self.groupBox)
+        self.checkBox_tab.setObjectName(u"checkBox_tab")
 
-        self.gridLayout_3.addWidget(self.pushButton_unicode, 1, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.checkBox_tab, 0, 2, 1, 1)
 
-        self.pushButton_list = QPushButton(self.groupBox)
-        self.pushButton_list.setObjectName(u"pushButton_list")
+        self.pushButton_white_space = QPushButton(self.groupBox)
+        self.pushButton_white_space.setObjectName(u"pushButton_white_space")
 
-        self.gridLayout_3.addWidget(self.pushButton_list, 0, 0, 1, 1)
-
-        self.radioButton_tab = QRadioButton(self.groupBox)
-        self.radioButton_tab.setObjectName(u"radioButton_tab")
-
-        self.gridLayout_3.addWidget(self.radioButton_tab, 0, 2, 1, 1)
-
-        self.pushButton_clear = QPushButton(self.groupBox)
-        self.pushButton_clear.setObjectName(u"pushButton_clear")
-
-        self.gridLayout_3.addWidget(self.pushButton_clear, 1, 2, 1, 1)
+        self.gridLayout_3.addWidget(self.pushButton_white_space, 2, 1, 1, 1)
 
         self.pushButton_dict = QPushButton(self.groupBox)
         self.pushButton_dict.setObjectName(u"pushButton_dict")
 
         self.gridLayout_3.addWidget(self.pushButton_dict, 0, 1, 1, 1)
 
-        self.pushButton_white_space = QPushButton(self.groupBox)
-        self.pushButton_white_space.setObjectName(u"pushButton_white_space")
+        self.pushButton_clear = QPushButton(self.groupBox)
+        self.pushButton_clear.setObjectName(u"pushButton_clear")
 
-        self.gridLayout_3.addWidget(self.pushButton_white_space, 1, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.pushButton_clear, 2, 2, 1, 1)
+
+        self.pushButton_unicode = QPushButton(self.groupBox)
+        self.pushButton_unicode.setObjectName(u"pushButton_unicode")
+
+        self.gridLayout_3.addWidget(self.pushButton_unicode, 2, 0, 1, 1)
+
+        self.pushButton_list = QPushButton(self.groupBox)
+        self.pushButton_list.setObjectName(u"pushButton_list")
+
+        self.gridLayout_3.addWidget(self.pushButton_list, 0, 0, 1, 1)
+
+        self.checkBox_number = QCheckBox(self.groupBox)
+        self.checkBox_number.setObjectName(u"checkBox_number")
+        self.checkBox_number.setEnabled(False)
+
+        self.gridLayout_3.addWidget(self.checkBox_number, 1, 2, 1, 1)
 
 
         self.gridLayout.addWidget(self.groupBox, 3, 0, 1, 1)
@@ -139,9 +145,28 @@ class Ui_Form(object):
         self.label_status.setText("")
         self.plainTextEdit.setPlainText("")
         self.groupBox_2.setTitle(QCoreApplication.translate("Form", u"\uacb0\uacfc \ucc98\ub9ac", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_clipboard.setToolTip(QCoreApplication.translate("Form", u"\uacb0\uacfc \ub0b4\uc6a9\uc744 \ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac\ud569\ub2c8\ub2e4.", None))
+#endif // QT_CONFIG(tooltip)
         self.pushButton_clipboard.setText(QCoreApplication.translate("Form", u"\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", None))
         self.label_2.setText(QCoreApplication.translate("Form", u"\uacb0\uacfc", None))
         self.groupBox.setTitle(QCoreApplication.translate("Form", u"\ubcc0\ud658 \uc791\uc5c5", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_tab.setToolTip(QCoreApplication.translate("Form", u"\ud0ed \uad6c\ubd84\uc744 \ub123\uac70\ub098 \ube8d\ub2c8\ub2e4.", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_tab.setText(QCoreApplication.translate("Form", u"\ud0ed \uad6c\ubd84", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_white_space.setToolTip(QCoreApplication.translate("Form", u"\ud0ed, \uc0c8 \uc904 \ubb38\uc790 \ub4f1\uc744 \\t, \\n \ub4f1\uc73c\ub85c \ubc14\uafc9\ub2c8\ub2e4.", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_white_space.setText(QCoreApplication.translate("Form", u"\uacf5\ubc31 \ubb38\uc790", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_dict.setToolTip(QCoreApplication.translate("Form", u"\uc5ec\ub7ec \uc904\ub85c \uad6c\ubd84\ub418\uc5b4 \uc788\ub294 \ubaa9\ub85d\uc744 \ud30c\uc774\uc36c\uc758 \ub515\uc154\ub108\ub9ac \ud615\uc2dd\uc73c\ub85c \ubcc0\ud658\ud569\ub2c8\ub2e4.", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_dict.setText(QCoreApplication.translate("Form", u"\ub515\uc154\ub108\ub9ac", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_clear.setToolTip(QCoreApplication.translate("Form", u"\uc6d0\ubcf8 \ub0b4\uc6a9\uc744 \uc9c0\uc6c1\ub2c8\ub2e4.", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_clear.setText(QCoreApplication.translate("Form", u"\uc9c0\uc6b0\uae30", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_unicode.setToolTip(QCoreApplication.translate("Form", u"\uc720\ub2c8\ucf54\ub4dc \uc774\uc2a4\ucf00\uc774\ud504 \uc2dc\ud000\uc2a4(\uc608: u00e9)\ub97c \uc0ac\ub78c\uc774 \uc77d\uc744 \uc218 \uc788\ub294 \ubb38\uc790\ub85c \ubcc0\ud658\ud569\ub2c8\ub2e4.", None))
 #endif // QT_CONFIG(tooltip)
@@ -150,12 +175,9 @@ class Ui_Form(object):
         self.pushButton_list.setToolTip(QCoreApplication.translate("Form", u"\uc5ec\ub7ec \uc904\ub85c \uad6c\ubd84\ub418\uc5b4 \uc788\ub294 \ubaa9\ub85d\uc744 \ud30c\uc774\uc36c\uc758 \ub9ac\uc2a4\ud2b8 \ud615\uc2dd\uc73c\ub85c \ubcc0\ud658\ud569\ub2c8\ub2e4.", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_list.setText(QCoreApplication.translate("Form", u"\ub9ac\uc2a4\ud2b8", None))
-        self.radioButton_tab.setText(QCoreApplication.translate("Form", u"\ud0ed \uad6c\ubd84", None))
 #if QT_CONFIG(tooltip)
-        self.pushButton_clear.setToolTip(QCoreApplication.translate("Form", u"\uc6d0\ubcf8 \ub0b4\uc6a9\uc744 \uc9c0\uc6c1\ub2c8\ub2e4.", None))
+        self.checkBox_number.setToolTip(QCoreApplication.translate("Form", u"\uad6c\ud604\ub418\uc9c0 \uc54a\uc74c", None))
 #endif // QT_CONFIG(tooltip)
-        self.pushButton_clear.setText(QCoreApplication.translate("Form", u"\uc9c0\uc6b0\uae30", None))
-        self.pushButton_dict.setText(QCoreApplication.translate("Form", u"\ub515\uc154\ub108\ub9ac", None))
-        self.pushButton_white_space.setText(QCoreApplication.translate("Form", u"\uacf5\ubc31 \ubb38\uc790", None))
+        self.checkBox_number.setText(QCoreApplication.translate("Form", u"\uc22b\uc790 \uc720\uc9c0", None))
     # retranslateUi
 
