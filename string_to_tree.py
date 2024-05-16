@@ -1,4 +1,4 @@
-"""# String to tree V1.1
+"""# String to tree V1.1 
 This module get tab indented string and convert it into so-called hierarchy table (a nested list),
 and then build hierarchy structure (a tree) using class methods and recursive calls,
 and then make a dictionary out of it.
