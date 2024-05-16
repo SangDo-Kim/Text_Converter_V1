@@ -1,4 +1,4 @@
-# Text Converter V1.2 for programmers (GUI in Korean)
+# Text Converter V1.21 for programmers (GUI in Korean)
 Written by SangDo_Kim
 This program converts various text to a form frequently used in Python programmings, like list, dictionary,
 unicode escape sequence, white space characters.
@@ -13,12 +13,7 @@ Kitchen
 	Cutting Board
 	Knife Set
 -->
-[
-	"Kitchen",
-	[
-		"Cutting Board", "Knife Set"
-	]
-]
+["Kitchen", ["Cutting Board", "Knife Set"]]
 
 - Tab indented string to dictionary:
 Kitchen
@@ -30,7 +25,7 @@ Living Room
 Bedroom
 -->
 {
-	"Kitchen": {{"Cutting Board": "Board001"}, {"Washer": None}
+    "Kitchen": {{"Cutting Board": "Board001"}, {"Washer": None}
 	"Living Room": "Sofas",
 	"Bedroom": None
 }
@@ -53,3 +48,6 @@ V1.1
 V1.2
 - Show tool tips for buttons.
 - Support level 3 hierarchy for dictionary.
+
+V1.21
+- Changes in string_to_tree.py (Put functions into class, bug fixes)
