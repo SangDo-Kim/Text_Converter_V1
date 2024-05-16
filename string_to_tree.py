@@ -1,59 +1,32 @@
-"""# String to tree V1.0
-This module get tab indented string and convert it into so-called hierarchy table (which is a nested list),
-and then build hierarchy structure using class and recursive calling it, so-called tree,
+"""# String to tree V1.1
+This module get tab indented string and convert it into so-called hierarchy table (a nested list),
+and then build hierarchy structure (a tree) using class methods and recursive calls,
 and then make a dictionary out of it.
+
+There are two classes:
+TreeNode: Mostly holds data of a node.
+BuildTree: Hold a list of TreeNode instances and provides most methods to create tree or dictionary.
+
+Methods in BuildTree:
+string_to_table: Tab indented string -> hierarchy table (a nested list).
+build_tree_from_table: Hierarchy table -> Tree structure (list of TreeNode instances)
+make_dict: Tree structure -> dictionary
+string_to_dict: Tab indented string -> dictionary (it calls three methods above)
+
+Pre-made instance in the module: build_tree
+You can just import "build_tree".
+
+V1.0
+- Initial creation
+
+V1.1
+- Put functions into class.
+- Bug fixes (Handles IndexError and others).
 """
-
-
-def string_to_hierarchy_table(string) -> list:
-    # Make a 2-level nested list, so-called hierarchy table.
-    # Each sub-list in the list is like ["parent's parent", "parent", "item", None] if it is a level 3 node,
-    # or just ["item", None, None, None] if it is a level 1 node.
-
-    # Determine the maximum depth of the tree structure. A depth can be 1 ~ 100.
-    lines = string.splitlines()
-    depth = 1
-    fail_count = 0
-    for i in range(99):
-        tap_string = "\n" + "\t" * i
-        if string.find(tap_string) >= 0:
-            depth = i + 1
-        else:
-            fail_count += 1
-        if fail_count > 5:
-            # if searching for the depth fails a few times, then stop.
-            break
-
-    # Specify parents in each line in lines
-    list_with_parents = [None for i in range(depth)]
-    lines_with_parents = []
-    for line in lines:
-        items = line.split("\t")
-        items_level = len(items)
-        # Ex: item == [parent, item]
-        list_with_parents[items_level - 1] = items[-1]
-        if items_level < depth:
-            for i in range(items_level, depth):
-                list_with_parents[i] = None
-
-        # Append a copy of a list
-        lines_with_parents.append(list_with_parents[:])
-    return lines_with_parents
-
-
-def string_to_dict(string) -> {}:
-    hierarchy_table = string_to_hierarchy_table(string)
-    tree = BuildTree()
-    try:
-        tree.build_tree_from_hierarchy_table(hierarchy_table)
-    except IndexError:
-        return {r"IndexError: The hierarchy structure of the source text may be invalid.": None}
-    dict1 = tree.make_dict()
-    return dict1
+import re
 
 
 class TreeNode:
-    depth = 0
     def __init__(self, serial_no, name, level, parent=None):
         self.serial_no = serial_no
         self.name = name
@@ -66,21 +39,23 @@ class BuildTree:
     def __init__(self):
         # Add root instance to tree node.
         self.tree_nodes = [TreeNode(0, "root", 0)]
+        self.depth = 0
 
-    def build_tree_from_hierarchy_table(self, hierarchy_table: list):
+        # Hierarchy table, a nested list in which each sub-list is like [grandparent name, parent name, name].
+        self.table = []
+
+    def build_tree_from_table(self):
+        self.tree_nodes = [TreeNode(0, "root", 0)]
         level = 0
         name = ""
         parent = 0
-        depth = 0
         parents_list = []
 
         # Get the depth of the table
-        depth = len(max(hierarchy_table, key=len))
-        self.tree_nodes[0].depth = depth
-
+        self.depth = len(max(self.table, key=len))
 
         # Build a tree
-        for line_no, line in enumerate(hierarchy_table):
+        for line_no, line in enumerate(self.table):
             for i in range(len(line) - 1, -1, -1):
                 if line[i] is not None:
                     level = i + 1
@@ -108,6 +83,41 @@ class BuildTree:
 
     def get_node(self, serial_no):
         return self.tree_nodes[serial_no]
+
+    def string_to_table(self, string):
+        # Make a 2-level nested list, so-called hierarchy table.
+        # Each sub-list in the list is like ["parent's parent", "parent", "item", None] if it is a level 3 node,
+        # or just ["item", None, None, None] if it is a level 1 node.
+
+        self.table = []
+        lines = string.strip().splitlines()
+        if len(lines) == 0:
+            return None
+
+        # Determine the maximum depth of the tree structure.
+        if string.find("\t") > 0:
+            max_tabs = max(len(match) for match in re.findall(r'(\t+)', string))
+            self.depth = max_tabs + 1
+        elif len(string.strip()) > 0:
+            self.depth = 1
+        else:
+            self.depth = 0
+
+        # Specify parents in each line in lines
+        list_with_parents = [None for i in range(self.depth)]
+        lines_with_parents = []
+        for line in lines:
+            items = line.split("\t")
+            items_level = len(items)
+            # Ex: item == [parent, item]
+            list_with_parents[items_level - 1] = items[-1]
+            if items_level < self.depth:
+                for i in range(items_level, self.depth):
+                    list_with_parents[i] = None
+
+            # Append a copy of a list
+            lines_with_parents.append(list_with_parents[:])
+        self.table = lines_with_parents
 
     def make_children_list(self, serial_no):
         children_list = []
@@ -151,11 +161,34 @@ class BuildTree:
 
         return _dict
 
+    def string_to_dict(self, string) -> {}:
+        try:
+            self.string_to_table(string)
+        except IndexError:
+            return {r"IndexError: The hierarchy structure of the source text may be invalid (string_to_table method)."
+                    : None}
+
+        try:
+            self.build_tree_from_table()
+        except IndexError:
+            return {r"IndexError: The hierarchy structure of the source text may be invalid (build_tree_from_table)."
+                    : None}
+
+        try:
+            _dict = self.make_dict()
+        except TypeError:
+            return {r"TypeError: The hierarchy structure of the source text may be invalid (make_dict).": None}
+
+        return _dict
+
+
+build_tree = BuildTree()
+
 
 if __name__ == "__main__":
     sample_string = (
         "Kitchen\n\tCutting Board\n\tKnife Set\n\t\tShort knife\nLiving Room\n\tSofas\nBedroom"
     )
 
-    _dict = string_to_dict(sample_string)
-    print(_dict)
+    my_dict = build_tree.string_to_dict(sample_string)
+    print(my_dict)

@@ -1,4 +1,4 @@
-"""# Text Converter V1.2 for programmers (GUI in Korean)
+"""# Text Converter V1.21 for programmers (GUI in Korean)
 Written by SangDo_Kim
 This program converts various text to a form frequently used in Python programmings, like list, dictionary,
 unicode escape sequence, white space characters.
@@ -13,12 +13,7 @@ Kitchen
 	Cutting Board
 	Knife Set
 -->
-[
-	"Kitchen",
-	[
-		"Cutting Board", "Knife Set"
-	]
-]
+["Kitchen", ["Cutting Board", "Knife Set"]]
 
 - Tab indented string to dictionary:
 Kitchen
@@ -30,7 +25,7 @@ Living Room
 Bedroom
 -->
 {
-	"Kitchen": {{"Cutting Board": "Board001"}, {"Washer": None}
+    "Kitchen": {{"Cutting Board": "Board001"}, {"Washer": None}
 	"Living Room": "Sofas",
 	"Bedroom": None
 }
@@ -53,19 +48,22 @@ V1.1
 V1.2
 - Show tool tips for buttons.
 - Support level 3 hierarchy for dictionary.
+
+V1.21
+- Changes in string_to_tree.py (Put functions into class, bug fixes)
 """
 import json
 
 from PySide6.QtWidgets import QMainWindow, QApplication, QWidget, QMessageBox
 from text_converter_ui import Ui_Form
-from string_to_tree import string_to_dict
+from string_to_tree import build_tree
 
 class MainWindow(QWidget, Ui_Form):
     def __init__(self, *args, obj=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.setupUi(self)
 
-        self.setWindowTitle("텍스트 변환기 V1.2")
+        self.setWindowTitle("텍스트 변환기 V1.21")
         self.plainTextEdit.setTabStopDistance(20)
         self.plainTextEdit_2.setTabStopDistance(20)
         self.label_status.setText("개발자: SangDo_Kim, 블로그: sangdo-kim.blogspot.com")
@@ -155,13 +153,12 @@ class MainWindow(QWidget, Ui_Form):
 
     def convert_to_dict(self):
         text = self.plainTextEdit.toPlainText()
-
-        dict1 = self.string_to_dict(str(text))
+        _dict = build_tree.string_to_dict(str(text))
 
         if self.checkBox_tab.isChecked():
-            text_mod = json.dumps(dict1, indent="\t")
+            text_mod = json.dumps(_dict, indent="\t")
         else:
-            text_mod = json.dumps(dict1)
+            text_mod = json.dumps(_dict)
         text_mod = text_mod.replace('": null', '": None')
         self.plainTextEdit_2.setPlainText(text_mod)
         if text.find("\t\t\t") >= 0:
@@ -169,10 +166,6 @@ class MainWindow(QWidget, Ui_Form):
             QMessageBox.information(self, "정보", "현재 딕셔너리에 대해서는 3단계 계층 구조까지만 지원합니다.")
         else:
             self.label_status.setText("딕셔너리로 변환했습니다.")
-
-    def string_to_dict(self, string):
-        _dict = string_to_dict(string)
-        return _dict
 
 
 app = QApplication()
