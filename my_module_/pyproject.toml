@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sangdo_mod"
+version = "1.0.2"
+description = "a custom package of my modules"
+authors = [
+    { name = "SangDo_Kim", email = "sangdo.kim69@gmail.com" }
+]
+
+[tool.setuptools]
+packages = ["sangdo_mod"]
+package-dir = {"" = "src"}
+
+# V1.0.2
+# config V1.0 --> V1.12
+#
