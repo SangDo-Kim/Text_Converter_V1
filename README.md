@@ -1,4 +1,4 @@
-# Text Converter V1.3 (GUI in Korean)
+# Text Converter V1.5 (GUI for Windows in Korean)
 Written by SangDo_Kim
 This program converts various text to a form frequently used in Python programmings, like list, dictionary,
 unicode escape sequence, white space characters.
@@ -53,4 +53,10 @@ V1.21
 - Changes in string_to_tree.py (Put functions into class, bug fixes)
 
 V1.3
-- Added JAV product code extract feature.
+- Added JAV product code (e.g JUL-001) extract feature.
+
+V1.4
+- Added: Show white space for human reading-friendly
+
+V1.5
+- Added: Python error message simplification.
