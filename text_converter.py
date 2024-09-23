@@ -1,4 +1,4 @@
-"""# Text Converter V1.3 (GUI in Korean)
+"""# Text Converter V1.5 (GUI for Windows in Korean)
 Written by SangDo_Kim
 This program converts various text to a form frequently used in Python programmings, like list, dictionary,
 unicode escape sequence, white space characters.
@@ -53,11 +53,17 @@ V1.21
 - Changes in string_to_tree.py (Put functions into class, bug fixes)
 
 V1.3
-- Added JAV product code extract feature.
+- Added JAV product code (e.g JUL-001) extract feature.
+
+V1.4
+- Added: Show white space for human reading-friendly
+
+V1.5
+- Added: Python error message simplification.
 """
 import json
 
-from PySide6.QtWidgets import QMainWindow, QApplication, QWidget, QMessageBox
+from PySide6.QtWidgets import QApplication, QWidget, QMessageBox
 from text_converter_ui import Ui_Form
 from sangdo_mod.string_to_tree import build_tree
 from sangdo_mod.JAV_prod_code import JAV_prod_code, NoCodeError
@@ -69,7 +75,7 @@ class MainWindow(QWidget, Ui_Form):
 
         # Initialize
         self.setupUi(self)
-        self.setWindowTitle("텍스트 변환기 V1.3")
+        self.setWindowTitle("텍스트 변환기 V1.5")
         self.plainTextEdit_source.setTabStopDistance(20)
         self.plainTextEdit_target.setTabStopDistance(20)
         self.label_status.setText("개발자: SangDo_Kim, 블로그: sangdo-kim.blogspot.com")
@@ -84,9 +90,11 @@ class MainWindow(QWidget, Ui_Form):
         self.pushButton_unicode.clicked.connect(self.convert_unicode)
         self.pushButton_clear.clicked.connect(self.clear_source)
         self.pushButton_white_space.clicked.connect(self.convert_white_space)
+        self.pushButton_white_space_show.clicked.connect(self.convert_white_space_show)
         self.pushButton_dict.clicked.connect(self.convert_to_dict)
         self.pushButton_prod_code.clicked.connect(self.convert_to_prod_code)
         self.pushButton_add.clicked.connect(self.add_pre_suf)
+        self.pushButton_python_error.clicked.connect(self.convert_python_error)
 
     def convert_to_list(self):
         text = self.plainTextEdit_source.toPlainText()
@@ -134,7 +142,7 @@ class MainWindow(QWidget, Ui_Form):
             [r"\r", r"\\r"],
             [r'\"', r'\\"'],
             [r'\"\\', r'\"\\\\']
-            ]
+        ]
 
         # Replace excluded escape sequences with their literal equivalents
         for escape, unicode in excluded_escapes:
@@ -153,6 +161,98 @@ class MainWindow(QWidget, Ui_Form):
         # list1 = text.replace("\n", '", "')
         # list1 = f'["{list1}"]'
         self.set_target(text_mod)
+
+    def convert_white_space_show(self):
+        text = self.plainTextEdit_source.toPlainText()
+        text = text.replace("\\n", "\n")
+        self.set_target(text)
+
+    def convert_python_error(self):
+        text = self.plainTextEdit_source.toPlainText()
+        text = text.replace("\\n", "\n")
+
+        # Split the text into lines
+        lines = text.splitlines()
+
+        # Process the first line only
+        if lines:
+            first_line = lines[0]
+
+            # Remove milliseconds using slicing
+            if ',' in first_line:
+                timestamp_end = first_line.index(',') + 4  # Keep 4 characters for comma and milliseconds part
+                first_line = first_line[:timestamp_end - 4] + first_line[timestamp_end:]
+
+            # Replace specific substrings
+            replace_list = [
+                ['- ERROR -', '\nERROR,'],
+                ['", "value": "', ', ']
+            ]
+            for before, after in replace_list:
+                first_line = first_line.replace(before, after)
+
+            # Remove specific keywords
+            keywords_to_remove = ['{"type": "', '", "traceback":', '"Traceback (most recent call last):']
+            for keyword in keywords_to_remove:
+                first_line = first_line.replace(keyword, '')
+
+            # Update the first line in the list of lines
+            lines[0] = first_line
+
+        # Add a dividing line between my modules and other modules.
+        updated_lines = []
+        dividing_line_added = False
+        for line in lines:
+            if '.venv' in line and not dividing_line_added:
+                updated_lines.append('-' * 50)
+                dividing_line_added = True
+            updated_lines.append(line)
+        lines = updated_lines
+
+        # Process each line
+        updated_lines = []
+        for line in lines:
+            # Strip whitespace
+            line = line.strip()
+            line = line.replace('"', '')
+
+            # Check if the line starts with 'File'
+            if line.startswith('File'):
+                parts = line.split('\\')
+                # Get the last part of the path and everything after the last quote
+                file_info = parts[-2]  # file_info is 'JCM_main.py'
+                rest_of_line = parts[-1]  # rest_of_line is ', line 82, in <module>'
+                updated_line = "\n" + file_info + rest_of_line
+            else:
+                updated_line = line
+
+            updated_lines.append(updated_line)
+
+        # Replace Traceback with ---
+        temp_lines = []
+        for line in updated_lines:
+            if line.find("Traceback") >= 0:
+                update_line = "-" * 30
+            else:
+                update_line = line
+            temp_lines.append(update_line)
+
+        updated_lines = temp_lines
+
+        # Handle the last parts
+        if len(updated_lines) > 3:
+            updated_lines.insert(len(updated_lines) - 2, "-" * 30)
+            updated_lines.insert(len(updated_lines) - 2, "")
+
+            updated_lines = updated_lines[:-1]
+
+        # Join the lines back into a single string
+        text = '\n'.join(updated_lines)
+
+        # Remove lines with ^^^ characters
+        text = '\n'.join(line for line in text.splitlines() if '^^^' not in line)
+
+        self.set_target(text)
 
     def convert_to_dict(self):
         text = self.plainTextEdit_source.toPlainText()
@@ -203,6 +303,7 @@ class MainWindow(QWidget, Ui_Form):
         else:
             target_line_no = self.target_original.count("\n") + 1
             self.label_status.setText(f"내용을 변환했습니다(결과: {target_line_no}줄)")
+
 
 app = QApplication()
 main_window = MainWindow()
